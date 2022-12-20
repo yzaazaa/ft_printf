@@ -48,11 +48,3 @@ int	ft_printf(const char *s, ...)
 	va_end(args);
 	return (len);
 }
-/*
-int	main()
-{
-	ft_printf(" %p ", NULL);
-	printf(" %p ", NULL);
-	return (0);
-}
-*/
