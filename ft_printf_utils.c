@@ -1,8 +1,9 @@
 #include "ft_printf.h"
 
-void	ft_putchar(char c)
+int	ft_putchar(char c)
 {
 	write(1, &c, 1);
+	return(1);
 }
 
 size_t	ft_strlen(const char *s)
@@ -14,104 +15,201 @@ size_t	ft_strlen(const char *s)
 	return (i - 1);
 }
 
-void	ft_putstr(char const *s)
+int	ft_putstr(char const *s)
 {
-	if(s)
-		write(1, s, ft_strlen(s));
-}
 
-void	ft_putnbr(int n)
-{
-	if(n == -2147483648)
+	if(s == NULL)
 	{
-		ft_putstr("-2147483648");
-		return ;
+		write(1, "(null)", 6);
+		return (6);
 	}
-	if(n < 0)
+	return(write(1, s, ft_strlen(s)));
+}
+
+int	ft_len(long n)
+{
+	int		len;
+
+	len = 0;
+	if (n == 0)
+		return (1);
+	if (n < 0)
 	{
-		ft_putchar('-');
-		n = -n;
+		n *= -1;
+		len++;
 	}
-	if(n > 9)
-		ft_putnbr(n / 10);
-	ft_putchar((n % 10) + '0');
-}
-
-void    ft_putnbr_base(int nbr, char *base)
-{
-    int     i;
-    int     j;
-    int     len_base;
-
-    i = 0;
-    len_base = ft_strlen(base);
-    if(len_base < 2)
-        return ;
-    while(i < len_base - 1)
-    {   
-        j = i + 1;
-        while(j < len_base)
-        {
-            if(base[i] == base[j] || base[i] == '+' || base[i] == '-'
-				|| base[j] == '+' || base[j] == '-' || base[i] <= ' '
-				|| base[i] > 126 || base[j] <= ' ' || base[j] > 126)
-                return ;
-            j++;
-        }
-        i++;
-    }
-    if(nbr == 0)
-    {
-        ft_putchar(base[0]);
-        return ;
-    }
-
-    if(nbr < 0)
-    {
-        ft_putchar('-');
-        nbr = -nbr;
-    }
-    if (nbr != 0)
+	while (n > 0)
 	{
-		if ((nbr / len_base) != 0)
-			ft_putnbr_base(nbr / len_base, base);
-        nbr = nbr % len_base;
+		n /= 10;
+		len++;
+	}
+	return (len);
 }
 
-void	ft_printchars(unsigned char c)
+char	*ft_itoa(int n)
 {
-	ft_putchar((c > 31 && c < 127) ? c : '.');
-}
+	char	*s;
+	long	m;
+	int		len;
 
-void	print_memory(const void *addr, size_t size)
-{
-	
-	unsigned char *t = (unsigned char *)addr;
-	size_t		i = 0;
-	int			col;
-	size_t		tmp = 0;
-
-	while (i < size)
+	m = (long) n;
+	len = ft_len(m);
+	s = malloc((len + 1) * sizeof(char));
+	if (!s)
+		return (0);
+	if (m < 0)
+		m *= -1;
+	s += len;
+	*s = 0;
+	if (m == 0)
+		*--s = '0';
+	while (m > 0)
 	{
-		col = -1;
-		tmp = i;
-		while (++col < 16)
+		*--s = m % 10 + '0';
+		m /= 10;
+	}
+	if (n < 0)
+		*--s = '-';
+	return (s);
+}
+
+int	ft_putnbr(int n)
+{
+	char	*s;
+	int	len;
+
+	s = ft_itoa(n);
+	len = ft_putstr(s);
+	free(s);
+	return (len);
+}
+
+int	hex_len(unsigned int num)
+{
+	int	len;
+
+	len = 0;
+	while(num != 0)
+	{
+		len++;
+		num /= 16;
+	}
+	return (len);
+}
+
+void	ft_puthex(unsigned int n, char c)
+{
+	if (n >= 16)
+	{
+		ft_puthex(n / 16, c);
+		ft_puthex(n % 16, c);
+	}
+	else
+	{
+		if(n <= 9)
+			ft_putchar(n + '0');
+		else
 		{
-			if (i < size)
-			{
-				if (t[i] < 16)
-					ft_putchar('0');
-				ft_putnbr_base(t[i], "0123456789ABCDEF");
-			}
-			else
-				ft_putstr("  ");
-			ft_putchar((i & 1) << 6);
-			i++;
+			if(c == 'x')
+				ft_putchar(n - 10 + 'a');
+			else if(c == 'X')
+				ft_putchar(n - 10 + 'A');
 		}
-		col = -1;
-		i = tmp;
-		while (++col < 16 && i < size)
-			ft_printchars(t[i++]);
-		ft_putchar('\n');
+	}	
+}
+
+int	ft_printhex(unsigned int num, char c)
+{
+	if(num == 0)
+		return (ft_putchar('0'));
+	else
+		ft_puthex(num, c);
+	return (hex_len(num));
+}
+
+char	*ft_uitoa(unsigned int n)
+{
+	char	*s;
+	long	m;
+	int		len;
+
+	m = (long) n;
+	len = ft_len(m);
+	s = malloc((len + 1) * sizeof(char));
+	if (!s)
+		return (0);
+	if (m < 0)
+		m *= -1;
+	s += len;
+	*s = 0;
+	if (m == 0)
+		*--s = '0';
+	while (m > 0)
+	{
+		*--s = m % 10 + '0';
+		m /= 10;
 	}
+	return (s);
+}
+
+int	ft_putuint(unsigned int n)
+{
+	int	len;
+	char	*s;
+
+	len = 0;
+	if(n == 0)
+		len += ft_putchar('0');
+	else
+	{
+		s = ft_uitoa(n);
+		len += ft_putstr(s);
+		free(s);
+	}
+	return (len);
+}
+
+int	ptr_len(uintptr_t num)
+{
+	int	len;
+
+	len = 0;
+	while(num != 0)
+	{
+		len++;
+		num = num / 16;
+	}
+	return (len);
+}
+
+void	ft_putptr(uintptr_t num)
+{
+	if(num >= 16)
+	{
+		ft_putptr(num / 16);
+		ft_putptr(num % 16);
+	}
+	else
+	{
+		if(num <= 9)
+			ft_putchar(num + '0');
+		else
+			ft_putchar(num - 10 + 'a');
+	}
+}
+
+int	ft_printptr(unsigned long long ptr)
+{
+	int	len;
+
+	len = 0;
+	len += write(1, "0x", 2);
+	if(ptr == 0)
+		len += write(1, "0", 1);
+	else
+	{
+		ft_putptr(ptr);
+		len += ptr_len(ptr);
+	}
+	return(len);
 }

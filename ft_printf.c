@@ -1,46 +1,58 @@
 #include "ft_printf.h"
 
-static void	ft_format(char c, va_list args)
+static int	ft_format(char c, va_list args)
 {
+	int	len;
+
+	len = 0;
 	if(c == 'c')
-		ft_putchar(va_arg(args, int));
+		len += ft_putchar(va_arg(args, int));
 	else if(c == 'd' || c == 'i')
-		ft_putnbr(va_arg(args, int));
+		len += ft_putnbr(va_arg(args, int));
 	else if(c == 's')
-		ft_putstr(va_arg(args, char *));
+		len += ft_putstr(va_arg(args, char *));
 	else if(c == 'u')
-		ft_putnbr((int)va_arg(args, unsigned int));
+		len += ft_putuint(va_arg(args, unsigned int));
 	else if(c == '%')
-		ft_putchar('%');
-	else if(c == 'x')
-		ft_putnbr_base(va_arg(args, int), "0123456789abcdef");
-	else if(c ==  'X')
-		ft_putnbr_base(va_arg(args, int), "0123456789ABCDEF");
-	else
-		return ;
+		len += ft_putchar('%');
+	else if(c == 'x' || c == 'X')
+		len += ft_printhex(va_arg(args, unsigned int), c);
+	else if(c == 'p')
+		len += ft_printptr(va_arg(args,unsigned long long));
+	return (len);
 }
 
 int	ft_printf(const char *s, ...)
 {
 	va_list	args;
 	int	i;
+	int	len;
 
 	i = 0;
+	len = 0;
 	va_start(args, s);
 	while(s[i])
 	{
 		if(s[i] == '%')
 		{
 			i++;
-			ft_format(s[i], args);
+			len += ft_format(s[i], args);
 			i++;
 		}
 		else
 		{
-			ft_putchar(s[i]);
+			len += ft_putchar(s[i]);
 			i++;
 		}
 	}
 	va_end(args);
-	return (i);
+	return (len);
 }
+/*
+int	main()
+{
+	int	i = 1;
+	ft_printf(" %p ", &i);
+	printf(" %p ", &i);
+	return (0);
+}*/
