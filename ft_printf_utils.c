@@ -203,11 +203,12 @@ int	ft_printptr(unsigned long long ptr)
 	int	len;
 
 	len = 0;
-	len += write(1, "0x", 2);
+
 	if(ptr == 0)
-		len += write(1, "0", 1);
+		len += write(1, "(nil)", 5);
 	else
 	{
+		len += write(1, "0x", 2);
 		ft_putptr(ptr);
 		len += ptr_len(ptr);
 	}

@@ -51,8 +51,8 @@ int	ft_printf(const char *s, ...)
 /*
 int	main()
 {
-	int	i = 1;
-	ft_printf(" %p ", &i);
-	printf(" %p ", &i);
+	ft_printf(" %p ", NULL);
+	printf(" %p ", NULL);
 	return (0);
-}*/
+}
+*/
