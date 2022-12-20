@@ -11,7 +11,7 @@ COMP = gcc
 CFLAGS = -Wall -Wextra -Werror
 
 .c.o:
-	$(COMP) $(CFLAGS) -c $< -o ${<:.c=.o} -I includes
+	$(COMP) $(CFLAGS) -c $< -o ${<:.c=.o}
 
 ${NAME}: ${OBJS}
 	ar rc ${NAME} ${OBJS}
