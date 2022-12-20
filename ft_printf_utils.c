@@ -76,14 +76,42 @@ void    ft_putnbr_base(int nbr, char *base)
 		if ((nbr / len_base) != 0)
 			ft_putnbr_base(nbr / len_base, base);
         nbr = nbr % len_base;
-		ft_putchar(base[nbr]);   
-	}
 }
 
+void	ft_printchars(unsigned char c)
+{
+	ft_putchar((c > 31 && c < 127) ? c : '.');
+}
 
+void	print_memory(const void *addr, size_t size)
+{
+	
+	unsigned char *t = (unsigned char *)addr;
+	size_t		i = 0;
+	int			col;
+	size_t		tmp = 0;
 
-
-
-
-
-
+	while (i < size)
+	{
+		col = -1;
+		tmp = i;
+		while (++col < 16)
+		{
+			if (i < size)
+			{
+				if (t[i] < 16)
+					ft_putchar('0');
+				ft_putnbr_base(t[i], "0123456789ABCDEF");
+			}
+			else
+				ft_putstr("  ");
+			ft_putchar((i & 1) << 6);
+			i++;
+		}
+		col = -1;
+		i = tmp;
+		while (++col < 16 && i < size)
+			ft_printchars(t[i++]);
+		ft_putchar('\n');
+	}
+}
