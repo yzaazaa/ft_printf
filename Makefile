@@ -1,32 +1,41 @@
-NAME		=	libftprintf.a
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: yzaazaa <yzaazaa@student.42.fr>            +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/11/14 00:21:38 by yzaazaa           #+#    #+#              #
+#    Updated: 2023/11/16 05:28:38 by yzaazaa          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-SRCS		=	ft_printf.c ft_printf_utils.c
+NAME = libftprintf.a
 
-OBJS		=	${SRCS:.c=.o}			
+SRCS = ft_printf.c helpers.c helpers_ptr.c ft_putnbr.c
 
-BONUS_OBJS	=	${BONUS_SRCS:.c=.o}
+OBJS = $(SRCS:.c=.o)
 
-COMP = gcc
+HEADER = ft_printf.h
 
 CFLAGS = -Wall -Wextra -Werror
 
-.c.o:
-	$(COMP) $(CFLAGS) -c $< -o ${<:.c=.o}
+CC = cc
 
-${NAME}: ${OBJS}
-	ar rc ${NAME} ${OBJS}
-	ranlib ${NAME}
+all : $(NAME)
 
-all:	${NAME}
+%.o : %.c $(HEADER)
+	$(CC) $(CFLAGS) -o $@ -c $< -fsanitize=address
 
-bonus:	$(BONUS_OBJS)
-	ar rcs $(NAME) $(BONUS_OBJS)
-	ranlib $(NAME)
+$(NAME) : $(OBJS) 
+	ar rc $(NAME) $(OBJS)
 
-clean:
-	rm -f ${OBJS} $(BONUS_OBJS)
+clean :
+	rm -f $(OBJS)
 
-fclean: clean
-	rm -f ${NAME}
+fclean : clean
+	rm -f $(NAME)
 
-re: 	fclean all
+re : fclean all
+
+.PHONY : fclean clean

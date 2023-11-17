@@ -1,29 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf.h                                        :+:      :+:    :+:   */
+/*   helpers.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yzaazaa <yzaazaa@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/07 03:58:12 by yzaazaa           #+#    #+#             */
-/*   Updated: 2023/11/14 22:39:48 by yzaazaa          ###   ########.fr       */
+/*   Created: 2023/11/07 04:07:06 by yzaazaa           #+#    #+#             */
+/*   Updated: 2023/11/14 22:46:51 by yzaazaa          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_PRINTF_H
-# define FT_PRINTF_H
+#include "ft_printf.h"
 
-# include <stdlib.h>
-# include <unistd.h>
-# include <stdarg.h>
+int	ft_putchar(char c)
+{
+	return (write(1, &c, 1));
+}
 
-int	ft_putchar(char c);
-int	ft_putstr(char *str);
-int	check(int tmp, int len);
-int	ft_putnbr(int nbr);
-int	ft_putuint(unsigned int n);
-int	ft_printptr(unsigned long long ptr);
-int	ft_printhex(unsigned int num, int c);
-int	ft_printf(const char *str, ...);
+int	ft_putstr(char *str)
+{
+	int	len;
+	int	i;
 
-#endif
+	if (!str)
+		return (ft_putstr("(null)"));
+	len = 0;
+	i = 0;
+	while (str[i])
+	{
+		if (write(1, &str[i++], 1) == -1)
+			return (-1);
+		len++;
+	}
+	return (len);
+}
+
+int	check(int tmp, int len)
+{
+	if (tmp == len + 1)
+		return (-1);
+	return (1);
+}
